@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class ControlUsuarios {
@@ -25,6 +26,20 @@ public class ControlUsuarios {
         usuario.setPassword(password);
         usuario.setTipo(Tipo.NORMAL.getDescripcion());
         daoUsuario.add(usuario);
+    }
+
+    public void eliminarUsuario(String id) {
+        Usuario usuario = daoUsuario.selectById(id);
+        daoUsuario.delete(usuario);
+        System.out.println("Usuario eliminado");
+    }
+
+    public void modificarUsuario(String dni, String nombre, String email, String password) {
+        Usuario usuario = daoUsuario.selectById(dni);
+        usuario.setNombre(nombre);
+        usuario.setEmail(email);
+        usuario.setPassword(password);
+        System.out.println("Usuario modificado");
     }
 
     public List<Usuario> listarUsuarios() {
@@ -57,5 +72,31 @@ public class ControlUsuarios {
         }
         return variableControl;
     }
+
+    public void anadirPenalizacion(int idUsuario) {
+        ControlPrestamo prestamo = new ControlPrestamo();
+        Usuario usuario = daoUsuario.selectById(String.valueOf(idUsuario));
+        int numeroPrestamos = prestamo.getNumeroPrestamos(idUsuario).size();
+        LocalDate fecha = LocalDate.now().plusDays(numeroPrestamos * 15);
+        usuario.setPenalizacionHasta(fecha);
+        System.out.println("Penalizacion aplicada");
+    }
+
+    public void eliminarPenalizacion(int idUsuario) {
+        ControlPrestamo prestamo = new ControlPrestamo();
+        Usuario usuario = daoUsuario.selectById(String.valueOf(idUsuario));
+        usuario.setPenalizacionHasta(null);
+        System.out.println("Penalizacion aplicada");
+    }
+
+    public void elimnarUsuario(int idUsuario) {
+        Usuario usuario = daoUsuario.selectById(String.valueOf(idUsuario));
+        ControlPrestamo prestamo = new ControlPrestamo();
+        List prestamos=prestamo.buscarPrestamos(idUsuario);
+        prestamo.eliminarPrestamos(prestamos);
+        System.out.println("Usuario eliminado");
+    }
+
+
 }
 
