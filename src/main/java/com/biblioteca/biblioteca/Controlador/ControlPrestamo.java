@@ -18,6 +18,8 @@ public class ControlPrestamo {
 
     public ControlPrestamo() {
         this.daoPrestamo= new DAOGenerico<>(Prestamo.class, Integer.class);
+        this.daoEjemplar= new DAOGenerico<>(Ejemplar.class, Integer.class);
+        this.daoUsuario= new DAOGenerico<>(Usuario.class, Integer.class);
     }
 
     public int addPrestamo(int usuarioId, int ejemplarId) {
@@ -42,14 +44,30 @@ public class ControlPrestamo {
 
     public void eliminarPrestamos(List<Prestamo> prestamos) {
         for (Prestamo prestamo : prestamos) {
-            daoPrestamo.delete(prestamo);
+            eliminarPrestamo(prestamo.getId());
         }
         System.out.println("Prestamos eliminados con exito");
     }
 
     public void eliminarPrestamo(int id) {
         Prestamo prestamo = daoPrestamo.selectById(id);
-        daoPrestamo.delete(prestamo);
+        Usuario usuario = daoUsuario.selectById(prestamo.getUsuario().getId());
+        ControlPrestamo controlPrestamo = new ControlPrestamo();
+        LocalDate fecha = LocalDate.now();
+        List <Prestamo> prestamos = controlPrestamo.getNumeroPrestamos(usuario.getId());
+        int contador = 0;
+        for(Prestamo p: prestamos){
+            if(p.getFechaDevolucion().isAfter(fecha)){
+                contador++;
+                LocalDate penalizacionHasta = LocalDate.now().plusDays(15 * contador);
+                usuario.setPenalizacionHasta(penalizacionHasta);
+            }
+        }
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("biblioteca");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        em.createQuery("delete from Prestamo p where p.usuario.id = :id").setParameter("id", id).executeUpdate();
         System.out.println("Prestamo eliminado");
     }
 
@@ -58,7 +76,7 @@ public class ControlPrestamo {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        List<Prestamo> prestamos = em.createQuery("select p from Prestamo p where p.usuario.id = :usuarioId", Prestamo.class).getResultList();
+        List<Prestamo> prestamos = em.createQuery("select p from Prestamo p where p.usuario.id = :usuarioId", Prestamo.class).setParameter("usuarioId",usuarioId).getResultList();
         tx.commit();
         em.close();
         return prestamos;

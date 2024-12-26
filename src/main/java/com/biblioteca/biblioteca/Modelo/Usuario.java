@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Table(name = "usuario")
 public class Usuario {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -86,4 +87,16 @@ public class Usuario {
         this.penalizacionHasta = penalizacionHasta;
     }
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", dni='" + dni + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", penalizacionHasta=" + penalizacionHasta +
+                '}';
+    }
 }
