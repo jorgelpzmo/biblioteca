@@ -1,6 +1,7 @@
 package com.biblioteca.biblioteca.Controlador;
 
 import com.biblioteca.biblioteca.Modelo.DAOGenerico;
+import com.biblioteca.biblioteca.Modelo.Estado;
 import com.biblioteca.biblioteca.Modelo.Libro;
 
 import java.util.List;
@@ -26,16 +27,17 @@ public class ControlLibros {
     }
 
     public void modificarLibro(String isbn, String titulo, String autor) {
-        try {
+        //try {
             Libro libro = daoLibro.selectById(isbn);
             ControlEjemplares controlEjemplares = new ControlEjemplares();
-            libro.setIsbn(isbn);
             libro.setTitulo(titulo);
             libro.setAutor(autor);
-        }catch(Exception e) {
-            System.out.println("Error al modificar el libro");
-        }
-        System.out.println("Libro modificado exitosamente");
+            daoLibro.update(libro);
+            System.out.println("Libro modificado exitosamente");
+        //}catch(Exception e) {
+        //    System.out.println(e.getMessage());
+        //}
+
 
     }
 

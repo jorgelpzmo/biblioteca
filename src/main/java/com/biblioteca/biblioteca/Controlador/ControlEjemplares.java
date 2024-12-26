@@ -21,11 +21,15 @@ public class ControlEjemplares {
     }
 
     public void addEjemplar(String isbn, Estado estado) {
-        Ejemplar ejemplar = new Ejemplar();
-        Libro libro = daoLibro.selectById(isbn);
-        ejemplar.setIsbn(libro);
-        ejemplar.setEstado(estado.getDescripcion());
-        daoEjemplar.add(ejemplar);
+        try {
+            Ejemplar ejemplar = new Ejemplar();
+            Libro libro = daoLibro.selectById(isbn);
+            ejemplar.setIsbn(libro);
+            ejemplar.setEstado(estado.getDescripcion());
+            daoEjemplar.add(ejemplar);
+        }catch (Exception e) {
+            System.out.println("Error al agregar el ejemplar");
+        }
     }
 
     public List<Ejemplar> SelectAllEjemplares(){
@@ -38,7 +42,8 @@ public class ControlEjemplares {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        List<Ejemplar> ejemplares = em.createQuery("select e from Ejemplar e where e.isbn = :isbn", Ejemplar.class).getResultList();
+        Libro libro = daoLibro.selectById(isbn);
+        List<Ejemplar> ejemplares = em.createQuery("select e from Ejemplar e where e.isbn = :isbn", Ejemplar.class).setParameter("isbn", libro).getResultList();
         tx.commit();
         em.close();
         return ejemplares;
@@ -58,13 +63,27 @@ public class ControlEjemplares {
     }
 
     public void modificarEjemplar(int id, String isbn, Estado estado) {
-        Ejemplar ejemplar = daoEjemplar.selectById(id);
-        Libro libro = daoLibro.selectById(isbn);
-        ejemplar.setIsbn(libro);
-        ejemplar.setEstado(estado.getDescripcion());
-        daoEjemplar.update(ejemplar);
-        System.out.println("Ejemplar modificado");
+        try {
+            Ejemplar ejemplar = daoEjemplar.selectById(id);
+            Libro libro = daoLibro.selectById(isbn);
+            ejemplar.setIsbn(libro);
+            ejemplar.setEstado(estado.getDescripcion());
+            daoEjemplar.update(ejemplar);
+            System.out.println("Ejemplar modificado");
+        }catch (Exception e) {
+            System.out.println("Error al modificar el ejemplar");
+        }
 
+    }
+
+    public void modificarEjemplares(List<Ejemplar> ejemplares, String isbn, Estado estado) {
+        for (Ejemplar ejemplar : ejemplares) {
+            Libro libro = new Libro();
+            libro.setIsbn(isbn);
+            ejemplar.setIsbn(libro);
+            ejemplar.setEstado(estado.getDescripcion());
+            daoEjemplar.update(ejemplar);
+        }
     }
 
     public int controlStock(List<Ejemplar>ejemplares){
@@ -75,6 +94,16 @@ public class ControlEjemplares {
             }
         }
         return contador;
+    }
+
+    public int controlStockEjemplar(String isbn){
+        int contador=0;
+        List<Ejemplar> ejemplares = buscarEjemplares(isbn);
+        for(Ejemplar ejemplar : ejemplares){
+            if(ejemplar.getEstado().equals(Estado.DISPONIBLE.getDescripcion())){
+                contador++;
+            }
+        }return contador;
     }
 
 }

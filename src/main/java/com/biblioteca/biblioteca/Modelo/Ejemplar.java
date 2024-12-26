@@ -13,7 +13,7 @@ public class Ejemplar {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "isbn", nullable = false)
     private Libro isbn;
@@ -47,4 +47,12 @@ public class Ejemplar {
         this.estado = estado;
     }
 
+    @Override
+    public String toString() {
+        return
+                "[id=" + id +
+                "- isbn=" + isbn.getIsbn() +
+                "- estado=" + estado +
+                "]\n";
+    }
 }
