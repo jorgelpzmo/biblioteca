@@ -42,6 +42,15 @@ public class ControlPrestamo {
         }
     }
 
+    public void modificarFechaDevolucion(int id, LocalDate fechaDevolucion) {
+        List<Prestamo> prestamo = buscarPrestamos(id);
+        for(Prestamo p: prestamo){
+            p.setFechaDevolucion(fechaDevolucion);
+        }
+        System.out.println("prestamo modificado con exito");
+
+    }
+
     public void eliminarPrestamos(List<Prestamo> prestamos) {
         for (Prestamo prestamo : prestamos) {
             eliminarPrestamo(prestamo.getId());
@@ -79,6 +88,11 @@ public class ControlPrestamo {
         List<Prestamo> prestamos = em.createQuery("select p from Prestamo p where p.usuario.id = :usuarioId", Prestamo.class).setParameter("usuarioId",usuarioId).getResultList();
         tx.commit();
         em.close();
+        return prestamos;
+    }
+
+    public List<Prestamo> selectAllPrestamos() {
+        List<Prestamo> prestamos = daoPrestamo.selectAll();
         return prestamos;
     }
 

@@ -7,6 +7,8 @@ import com.biblioteca.biblioteca.Controlador.ControlUsuarios;
 import com.biblioteca.biblioteca.Modelo.Estado;
 import com.biblioteca.biblioteca.Modelo.Tipo;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -404,6 +406,66 @@ public class Main {
                         default:
                             System.out.println("Opcion no valida");
                             break;
+
+
+                    }
+                case 4:
+                    int controlMenuPrestamos;
+                    System.out.println("---GESTION PRESTAMOS---");
+                    System.out.println("0. Salir");
+                    System.out.println("1. Añadir prestamos");
+                    System.out.println("2. Modificar prestamos");
+                    System.out.println("3. Eliminar prestamos");
+                    System.out.println("4. Ver prestamos");
+                    System.out.println("5. Buscar prestamos");
+                    controlMenuPrestamos = sc.nextInt();
+                    switch (controlMenuPrestamos) {
+                        case 0:
+                            System.out.println("Saliendo del menu...");
+                            break;
+                        case 1:
+                            Scanner scAnadir = new Scanner(System.in);
+                            System.out.println("Ingrese el id del usuario");
+                            int id = scAnadir.nextInt();
+                            System.out.println("Ingrese el id del ejemplar");
+                            int id2 = scAnadir.nextInt();
+                            ControlPrestamo controlPrestamo = new ControlPrestamo();
+                            controlPrestamo.addPrestamo(id, id2);
+                            break;
+                        case 2:
+                            Scanner scModificar = new Scanner(System.in);
+                            System.out.println("Ingrese el id del prestamo");
+                            int id3= scModificar.nextInt();
+                            System.out.println("Ingrese la fecha de devolucion del ejemplar");
+                            System.out.println("Introduce un dia");
+                            int dia = scModificar.nextInt();
+                            System.out.println("Introduce un mes");
+                            int mes = scModificar.nextInt();
+                            System.out.println("Introduce un año");
+                            int ano = scModificar.nextInt();
+                            LocalDate fecha = LocalDate.of(ano, mes, dia);
+                            ControlPrestamo controlPrestamo2 = new ControlPrestamo();
+                            controlPrestamo2.modificarFechaDevolucion(id3, fecha);
+                            break;
+                        case 3:
+                            Scanner scEliminar2 = new Scanner(System.in);
+                            System.out.println("Ingrese el id del prestamo");
+                            int id4= scEliminar2.nextInt();
+                            ControlPrestamo controlPrestamo3 = new ControlPrestamo();
+                            controlPrestamo3.eliminarPrestamo(id4);
+                            break;
+                        case 4:
+                            ControlPrestamo controlPrestamo4 = new ControlPrestamo();
+                            System.out.println(controlPrestamo4.selectAllPrestamos());
+                            break;
+                        case 5:
+                            Scanner scVista3 = new Scanner(System.in);
+                            ControlPrestamo controlPrestamo5 = new ControlPrestamo();
+                            System.out.println("Ingrese el id del prestamo");
+                            int id5= scVista3.nextInt();
+                            System.out.println(controlPrestamo5.buscarPrestamos(id5));
+                            break;
+
 
 
                     }
